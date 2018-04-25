@@ -22,17 +22,24 @@ public class Worker implements Callable<String>
 
         if(isConnectionNull())
         {
+            System.out.println("API connection resulted in no JSONBody checking response code!");
+
             if(connection.getResponseCode() == 429)
             {
+                System.out.println("API response code is: 429. Retrying in " + connection.getHeaders().get("Retry-After").get(0) + " seconds!");
                 sleepyTime(Integer.parseInt(connection.getHeaders().get("Retry-After").get(0)));
 
                 if(isConnectionNull())
                 {
+                    System.out.println("API connection still resulted in no JSONBody. Response code: " + connection.getResponseCode());
+                    System.out.println(url);
                     return null;
                 }
             }
             else
             {
+                System.out.println("Unhandled response code: " + connection.getResponseCode());
+                System.out.println(url);
                 return null;
             }
         }
@@ -50,15 +57,18 @@ public class Worker implements Callable<String>
             {
                 return;
             }
+            System.out.println("API limit is being limited! " + limits.getMinuteTime() + " seconds!");
             sleepyTime(limits.getMinuteTime());
         }
         else
         {
             if(limits.isMinuteReached())
             {
+                System.out.println("API limit is being limited! " + limits.getSecondTime() + " seconds!");
                 sleepyTime(limits.getSecondTime());
                 return;
             }
+            System.out.println("API limit is being limited! " + limits.getMinuteTime() + " seconds!");
             sleepyTime(limits.getMinuteTime());
         }
     }

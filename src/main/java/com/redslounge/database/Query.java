@@ -34,4 +34,16 @@ public class Query
             System.out.println("Failed to execute query: " + e.toString());
         }
     }
+
+    public void executeIntoDatabase(String sql)
+    {
+        try
+        {
+            statement.executeUpdate(sql);
+        }
+        catch(Exception e)
+        {
+            System.out.println("Failed to insurt data into database: " + e.toString());
+        }
+    }
 }
